@@ -3,6 +3,7 @@
 """
 from enum import Enum
 
+# 枚举常量
 
 class StixCyberObservableTypes(Enum):
     AUTONOMOUS_SYSTEM = "Autonomous-System"

@@ -1,4 +1,5 @@
 import uuid
+
 from stix2 import (
     ObjectPath,
     EqualityComparisonExpression,
