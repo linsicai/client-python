@@ -6,7 +6,7 @@ from enum import Enum
 # 枚举常量
 
 class StixCyberObservableTypes(Enum):
-    AUTONOMOUS_SYSTEM = "Autonomous-System"
+    AUTONOMOUS_SYSTEM = "x-System"
     DIRECTORY = "Directory"
     DOMAIN_NAME = "Domain-Name"
     EMAIL_ADDR = "Email-Addr"
@@ -40,6 +40,7 @@ class StixCyberObservableTypes(Enum):
         return value.lower() in lower_attr
 
 
+# 行业，组织，个人
 class IdentityTypes(Enum):
     SECTOR = "Sector"
     ORGANIZATION = "Organization"
@@ -50,7 +51,8 @@ class IdentityTypes(Enum):
         lower_attr = list(map(lambda x: x.lower(), cls._value2member_map_))
         return value.lower() in lower_attr
 
-
+# 位置
+# 
 class LocationTypes(Enum):
     CITY = "City"
     COUNTRY = "Country"

@@ -1,5 +1,6 @@
 from enum import Enum
 
+# 范围定义
 # Scope definition
 # EXTERNAL_IMPORT = None
 # INTERNAL_IMPORT_FILE = Files mime types to support (application/json, ...)
@@ -7,6 +8,7 @@ from enum import Enum
 # INTERNAL_EXPORT_FILE = Files mime types to generate (application/pdf, ...)
 
 
+# 连接者类型
 class ConnectorType(Enum):
     EXTERNAL_IMPORT = "EXTERNAL_IMPORT"  # From remote sources to OpenCTI stix2
     INTERNAL_IMPORT_FILE = (
@@ -19,18 +21,19 @@ class ConnectorType(Enum):
     STREAM = "STREAM"  # Read the stream and do something
 
 
+# 连接者
 class OpenCTIConnector:
     """Main class for OpenCTI connector
 
-    :param connector_id: id for the connector (valid uuid4)
+    :param connector_id: id for the connector (valid uuid4) 连接者id
     :type connector_id: str
-    :param connector_name: name for the connector
+    :param connector_name: name for the connector 连接者名称
     :type connector_name: str
-    :param connector_type: valid OpenCTI connector type (see `ConnectorType`)
+    :param connector_type: valid OpenCTI connector type (see `ConnectorType`) 类型
     :type connector_type: str
-    :param scope: connector scope
+    :param scope: connector scope 域
     :type scope: str
-    :raises ValueError: if the connector type is not valid
+    :raises ValueError: if the connector type is not valid 会抛出异常
     """
 
     def __init__(
