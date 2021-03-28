@@ -10,6 +10,7 @@ from stix2 import (
     properties,
 )
 
+# 字段名 字段类型 字段格式
 PATTERN_MAPPING = {
     "Autonomous-System": ["number"],
     "Directory": ["path"],
@@ -40,20 +41,27 @@ class OpenCTIStix2Utils:
     @staticmethod
     def create_stix_pattern(observable_type, observable_value):
         if observable_type in PATTERN_MAPPING:
+            # 拼字段路径
             lhs = ObjectPath(
+                # 类型
                 observable_type.lower()
                 if "_" not in observable_type
                 else observable_type.split("_")[0].lower(),
+                # 字段格式
                 PATTERN_MAPPING[observable_type],
             )
+
+            # 拼表达式
             ece = ObservationExpression(
                 EqualityComparisonExpression(lhs, observable_value)
             )
             return str(ece)
         else:
+            # 找不到格式
             return None
 
     """Generate random stix id (uuid v1)
+    获取随机id
     This id will stored and resolved by openCTI
     We will stored only 5 stix of this type to prevent database flooding
     :param stix_type: the stix type
@@ -89,6 +97,7 @@ class OpenCTIStix2Utils:
         ),
     ],
 )
+# 简单看得见
 class SimpleObservable:
     pass
 
@@ -118,5 +127,6 @@ class SimpleObservable:
         ),
     ],
 )
+# 事件，是个用户自定义对象
 class StixXOpenCTIIncident:
     pass

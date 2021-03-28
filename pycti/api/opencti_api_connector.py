@@ -6,12 +6,14 @@ from typing import Dict, Any
 from pycti.connector.opencti_connector import OpenCTIConnector
 
 
+# api 连接器
 class OpenCTIApiConnector:
     """OpenCTIApiConnector"""
 
     def __init__(self, api):
         self.api = api
 
+    # 列出所有api
     def list(self) -> Dict:
         """list available connectors
 
@@ -41,6 +43,7 @@ class OpenCTIApiConnector:
         result = self.api.query(query)
         return result["data"]["connectors"]
 
+    # ping 一个连接器
     def ping(self, connector_id: str, connector_state: Any) -> Dict:
         """pings a connector by id and state
 
@@ -65,6 +68,7 @@ class OpenCTIApiConnector:
         )
         return result["data"]["pingConnector"]
 
+    # 注册一个连接器
     def register(self, connector: OpenCTIConnector) -> Dict:
         """register a connector with OpenCTI
 

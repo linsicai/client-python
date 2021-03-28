@@ -51,8 +51,7 @@ class IdentityTypes(Enum):
         lower_attr = list(map(lambda x: x.lower(), cls._value2member_map_))
         return value.lower() in lower_attr
 
-# 位置
-# 
+# 位置：城市、国家、地区、位置
 class LocationTypes(Enum):
     CITY = "City"
     COUNTRY = "Country"
@@ -65,6 +64,7 @@ class LocationTypes(Enum):
         return value.lower() in lower_attr
 
 
+# 容器：注释、观察数据、意见、报告
 class ContainerTypes(Enum):
     NOTE = "Note"
     OBSERVED_DATA = "Observed-Data"

@@ -49,6 +49,7 @@ from pycti.entities.opencti_indicator import Indicator
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
+# 文件：名称、数据、类型
 class File:
     def __init__(self, name, data, mime="text/plain"):
         self.name = name
@@ -59,15 +60,15 @@ class File:
 class OpenCTIApiClient:
     """Main API client for OpenCTI
 
-    :param url: OpenCTI API url
+    :param url: OpenCTI API url 网址
     :type url: str
-    :param token: OpenCTI API token
+    :param token: OpenCTI API token 
     :type token: str
-    :param log_level: log level for the client
+    :param log_level: log level for the client 日志等级
     :type log_level: str, optional
-    :param ssl_verify:
+    :param ssl_verify: 是否ssl
     :type ssl_verify: bool, optional
-    :param proxies:
+    :param proxies: 代理
     :type proxies: dict, optional, The proxy configuration, would have `http` and `https` attributes. Defaults to {}
         ```
         proxies: {
@@ -81,6 +82,7 @@ class OpenCTIApiClient:
         """Constructor method"""
 
         # Check configuration
+        # 校验一下配置
         self.ssl_verify = ssl_verify
         self.proxies = proxies
         if url is None or len(token) == 0:
@@ -91,6 +93,7 @@ class OpenCTIApiClient:
             )
 
         # Configure logger
+        # 设置日志等级
         self.log_level = log_level
         numeric_level = getattr(logging, self.log_level.upper(), None)
         if not isinstance(numeric_level, int):
@@ -98,16 +101,19 @@ class OpenCTIApiClient:
         logging.basicConfig(level=numeric_level)
 
         # Define API
+        # 定义api
         self.api_token = token
         self.api_url = url + "/graphql"
         self.request_headers = {"Authorization": "Bearer " + token}
 
         # Define the dependencies
+        # 定义工作器、连接器、规范
         self.work = OpenCTIApiWork(self)
         self.connector = OpenCTIApiConnector(self)
         self.stix2 = OpenCTIStix2(self)
 
         # Define the entities
+        # 定义一些实体
         self.label = Label(self)
         self.marking_definition = MarkingDefinition(self)
         self.external_reference = ExternalReference(self)
@@ -139,26 +145,30 @@ class OpenCTIApiClient:
         self.indicator = Indicator(self)
 
         # Check if openCTI is available
+        # 做一下心跳检测
         if not self.health_check():
             raise ValueError(
                 "OpenCTI API is not reachable. Waiting for OpenCTI API to start or check your configuration..."
             )
 
+    # 设置申请人id
     def set_applicant_id_header(self, applicant_id):
         self.request_headers["opencti-applicant-id"] = applicant_id
 
+    # 设置重试次数
     def set_retry_number(self, retry_number):
         self.request_headers["opencti-retry-number"] = (
             "" if retry_number is None else str(retry_number)
         )
 
+    # 做查询
     def query(self, query, variables={}):
         """submit a query to the OpenCTI GraphQL API
 
-        :param query: GraphQL query string
+        :param query: GraphQL query string 查询语言
         :type query: str
         :param variables: GraphQL query variables, defaults to {}
-        :type variables: dict, optional
+        :type variables: dict, optional 变量
         :return: returns the response json content
         :rtype: Any
         """
@@ -168,15 +178,20 @@ class OpenCTIApiClient:
         # Implementation of spec https://github.com/jaydenseric/graphql-multipart-request-spec
         # Support for single or multiple upload
         # Batching or mixed upload or not supported
+        # 遍历变量，区别正常变量和文件变量
         var_keys = variables.keys()
         for key in var_keys:
             val = variables[key]
+
+            # 看是否文件或文件列表
             is_file = type(val) is File
             is_files = (
                 isinstance(val, list)
                 and len(val) > 0
                 and all(map(lambda x: isinstance(x, File), val))
             )
+
+            # 设置查询变量和文件变量
             if is_file or is_files:
                 files_vars.append({"key": key, "file": val, "multiple": is_files})
                 query_var[key] = None if is_file else [None] * len(val)
@@ -188,12 +203,15 @@ class OpenCTIApiClient:
             multipart_data = {
                 "operations": json.dumps({"query": query, "variables": query_var})
             }
-            # Build the multipart map
+        
+            # Build the multipart map 遍历文件变量
+            # 构建序号到文件名的映射表
             map_index = 0
             file_vars = {}
             for file_var_item in files_vars:
                 is_multiple_files = file_var_item["multiple"]
                 var_name = "variables." + file_var_item["key"]
+        
                 if is_multiple_files:
                     # [(var_name + "." + i)] if is_multiple_files else
                     for _ in file_var_item["file"]:
